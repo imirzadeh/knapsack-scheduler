@@ -7,7 +7,7 @@ from pipeline import Pipeline
 from credentials import COMET_ML_KEY
 from config import CONFIG_POOL_REG, get_config_by_id
 
-RETRY_EXPERIMENTS = 100
+RETRY_EXPERIMENTS = 10
 
 
 def run(config):
