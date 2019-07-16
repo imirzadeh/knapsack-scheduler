@@ -20,7 +20,7 @@ def draw_bar_plot(filename='./measures.csv'):
 	RED = "#ff796c"
 	colors = [BLUE, RED]
 
-	fit_curves = {'energy_per_sample': 1, 'val_accuracy': 2}
+	fit_curves = {'energy_per_sample': 1, 'score': 2}
 	for i, col in enumerate(fit_curves.keys()):
 		wanted_ax = [ax, ax2][i]
 		wanted_ax.bar([p + width * i for p in pos], df[col], width, color=colors[i])

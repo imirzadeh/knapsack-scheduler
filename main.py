@@ -37,7 +37,7 @@ def train_models(config_pool):
 	for cfg in config_pool:
 		print('running {}'.format(cfg.to_dict()))
 		result = cfg.to_dict()
-		result['val_accuracy'] = run(cfg)
+		result['score'] = run(cfg)
 		results.append(result)
 	df = pd.DataFrame(results)
 	df = df.set_index('id')
@@ -88,7 +88,6 @@ def generate_report(dataset_name, config_pool):
 		measurement = measurements.get(row['id'], None)
 		if not measurement:
 			continue
-		row['val_accuracy'] = row['val_accuracy'] * 100
 		row['energy_per_sample'] = measurement['energy_per_sample']
 		row['time_per_sample'] = measurement['time_per_sample']
 		new_report.append(row)
@@ -98,9 +97,9 @@ def generate_report(dataset_name, config_pool):
 	
 if __name__ == "__main__":
 	# train_models()
-	# generate_report('california_hosuing', CONFIG_POOL_REG)
+	generate_report('california_hosuing', CONFIG_POOL_REG)
 	
-	cfg_id = int(sys.argv[1])
-	cfg = get_config_by_id(cfg_id)
-	print(cfg.id)
-	measure(cfg)
+	# cfg_id = int(sys.argv[1])
+	# cfg = get_config_by_id(cfg_id)
+	# print(cfg.id)
+	# measure(cfg)
