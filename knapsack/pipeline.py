@@ -26,7 +26,7 @@ class Pipeline(object):
 		
 	def validate(self):
 		model_name = self.clf.__str__().lower()
-		if 'regress' in model_name or 'svr' in model_name:
+		if 'regress' in model_name or 'svr' in model_name or 'lasso' in model_name:
 			score = mean_squared_error(self.clf.predict(self.X_test), self.y_test)
 		else:
 			score = accuracy_score(self.clf.predict(self.X_test), self.y_test)
