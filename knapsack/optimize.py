@@ -1,33 +1,13 @@
 import cvxpy as cp
 import numpy as np
 import pandas as pd
+from knapsack import helpers
+from knapsack.settings import RESULT_FILE
 
 
 def read_measurements_file():
-	df = pd.read_csv('./measures.csv')
+	df = helpers.read_sheet(RESULT_FILE, 'measures')
 	return df
-
-
-def is_regression_dataset(dataset_name):
-	dataset_name = dataset_name.lower()
-	regression_dataset_identifiers = ['california', 'boston', 'housing', 'regression', 'regress', 'reg']
-	for id in regression_dataset_identifiers:
-		if id in dataset_name:
-			return True
-	return False
-	
-
-def scale_values(values):
-	max_val = max(values)
-	# scale all from zero to one
-	values = [(v * 1.0)/max_val for v in values]
-	return values
-
-
-def one_minus_x(values):
-	assert max(values) <= 1.0 and min(values) >= 0
-	values = [1.0-v for v in values]
-	return values
 
 	
 def prepare_optimization_problem_variables():
@@ -37,8 +17,8 @@ def prepare_optimization_problem_variables():
 	values = list(df['score'])
 	dataset_name = get_dataset_name(df)
 	
-	if is_regression_dataset(dataset_name):
-		values = one_minus_x(scale_values(values))
+	if helpers.is_regression_dataset(dataset_name):
+		values = helpers.one_minus_x(helpers.scale_values(values))
 	
 	assert len(ids) == len(weights) and len(weights) == len(values)
 	
@@ -51,6 +31,7 @@ def prepare_optimization_problem_variables():
 
 def get_dataset_name(df):
 	return list(df['dataset'])[0]
+
 
 def solve_knapsack(W, U_MAX):
 	# get variables from file
@@ -73,7 +54,7 @@ def solve_knapsack(W, U_MAX):
 
 def report_solution(U_MAX):
 	df = read_measurements_file()
-	is_regression = is_regression_dataset(get_dataset_name(df))
+	is_regression = helpers.is_regression_dataset(get_dataset_name(df))
 	
 	min_energy = U_MAX * min(list(df['energy_per_sample'])) + 1100
 	max_energy = U_MAX * max(list(df['energy_per_sample']))
@@ -81,8 +62,6 @@ def report_solution(U_MAX):
 	delta = (max_energy - min_energy) // NUM_W
 	W_list = [((min_energy + i * delta)//1000)*1000 for i in range(NUM_W)]
 	# W_list = [50000, 75000, 100000, 150000, 200000]
-	print('min energy: {}, max energy: {}'.format(min_energy//1000, max_energy//1000))
-	print(W_list)
 	
 	optimal_values = pd.DataFrame()
 	sheets = {
@@ -100,7 +79,6 @@ def report_solution(U_MAX):
 		{'model': 'min_energy-' + str(min_energy_model['id']), 'score': min_energy_model['score'], 'energy': (U_MAX*min_energy_model['energy_per_sample'])/1000}
 	]
 	
-
 	for W in W_list:
 		status, ids, solution = solve_knapsack(W, U_MAX)
 		optimal_values[str(W//1000)] = list(map(lambda x: int(round(x, 2)), solution))
@@ -114,25 +92,11 @@ def report_solution(U_MAX):
 			'energy': optimal_energy
 		})
 		
-		# new_report = []
-		# for index, row in df.iterrows():
-		# 	row = dict(row)
-		# 	row['solution'] = int(round(solution[ids.index(index)]))
-		# 	row['optimal_energy'] = row['solution'] * row['energy_per_sample']
-		# 	row['non_optimal_energy'] = U_MAX * row['energy_per_sample']
-		# 	new_report.append(row)
-	
 	sheets['optimal_values'] = optimal_values
 	sheets['comparison'] = pd.DataFrame(comparison_data).set_index('model')
+	helpers.append_multiple_sheets(RESULT_FILE, sheets)
 	
-	excel_writer = pd.ExcelWriter('report.xlsx')
-	for sheet_name in sheets.keys():
-		sheets[sheet_name].to_excel(excel_writer, sheet_name)
-	excel_writer.save()
 
-# df = pd.DataFrame(new_report).set_index('id')
-	# df.to_csv('./solution.csv')
-	
 if __name__ == "__main__":
 	W = 55 * 1000
 	U_MAX = 3600 * 24 * 1

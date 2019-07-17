@@ -1,16 +1,16 @@
 import sys
+from knapsack import helpers
 from comet_ml import Experiment
 import pandas as pd
 from joblib import load
-from dataset import Dataset
-from pipeline import Pipeline
-from credentials import COMET_ML_KEY
-from config import CONFIG_POOL_REG, get_config_by_id
-
-RETRY_EXPERIMENTS = 10
+from knapsack.dataset import Dataset
+from knapsack.pipeline import Pipeline
+from knapsack.config import get_config_by_id
+from knapsack.settings import DATASET_NAME, RETRY_EXPERIMENTS, CURRENT_POOL
 
 
-def run(config):
+
+def build_model(config):
 	p = Pipeline(config)
 	p.run_pipeline()
 	score = p.validate()
@@ -25,26 +25,17 @@ def measure(config):
 			clf.predict([x])
 
 
-def create_comet_experiment():
-	exp = Experiment(**COMET_ML_KEY)
-	return exp
-
-
-def train_models(config_pool):
-	# experiment = create_comet_experiment()
+def train_models(config_pool=CURRENT_POOL):
 	results = []
 	
 	for cfg in config_pool:
 		print('running {}'.format(cfg.to_dict()))
 		result = cfg.to_dict()
-		result['score'] = run(cfg)
+		result['score'] = build_model(cfg)
 		results.append(result)
 	df = pd.DataFrame(results)
 	df = df.set_index('id')
-	df.to_csv('results.csv')
-	# experiment.log_asset_folder('./data')
-	# experiment.log_asset_folder('./models')
-	# experiment.log_asset('./results.csv')
+	helpers.create_new_excel_file('report.xlsx', {'models': df})
 
 
 def read_measurements(dataset_name, config_pool):
@@ -58,7 +49,7 @@ def read_measurements(dataset_name, config_pool):
 	for cfg in config_pool:
 		energy_counts = []
 		duration_counts = []
-		with open("{}.txt".format(cfg.id), 'r') as f:
+		with open("./{}.txt".format(cfg.id), 'r') as f:
 			lines = list(map(lambda x: float(x.strip()), f.readlines()))
 		
 		for n, line in enumerate(lines):
@@ -79,9 +70,9 @@ def read_measurements(dataset_name, config_pool):
 	return measurements
 
 
-def generate_report(dataset_name, config_pool):
-	measurements = read_measurements(dataset_name=dataset_name, config_pool=config_pool)
-	df = pd.read_csv('./results.csv')
+def generate_report(config_pool=CURRENT_POOL):
+	measurements = read_measurements(dataset_name=DATASET_NAME, config_pool=config_pool)
+	df = helpers.read_sheet('report.xlsx', 'models')
 	new_report = []
 	for index, row in df.iterrows():
 		row = dict(row)
@@ -92,14 +83,12 @@ def generate_report(dataset_name, config_pool):
 		row['time_per_sample'] = measurement['time_per_sample']
 		new_report.append(row)
 	df = pd.DataFrame(new_report).set_index('id')
-	df.to_csv('./measures.csv')
+	helpers.append_sheet('report.xlsx', 'measures', df)
 
 	
 if __name__ == "__main__":
-	# train_models()
-	generate_report('california_hosuing', CONFIG_POOL_REG)
+	cfg_id = int(sys.argv[1])
+	cfg = get_config_by_id(cfg_id)
+	print(cfg.id)
+	measure(cfg)
 	
-	# cfg_id = int(sys.argv[1])
-	# cfg = get_config_by_id(cfg_id)
-	# print(cfg.id)
-	# measure(cfg)

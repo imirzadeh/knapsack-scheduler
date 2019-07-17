@@ -63,36 +63,46 @@ MODEL_POOL = [
 
 CONFIG_POOL = [Config(id=i, dataset_name='artificial_clf_multi', classifier_model=clf) for i, clf in enumerate(MODEL_POOL)]
 
+# MODEL_POOL_REG = [
+# 	SVR(degree=2, C=0.2, gamma='scale'),
+# 	SVR(degree=3, C=0.2, gamma='scale'),
+# 	SVR(degree=5, C=0.2, gamma='scale'),
+# 	DecisionTreeRegressor(criterion='mse', max_depth=4),
+# 	DecisionTreeRegressor(criterion='mse', max_depth=8),
+# 	DecisionTreeRegressor(criterion='mse', max_depth=10),
+# 	KNeighborsRegressor(n_neighbors=3, algorithm='ball_tree'),
+# 	KNeighborsRegressor(n_neighbors=3, algorithm='kd_tree'),
+# 	LinearRegression(),
+# 	RandomForestRegressor(n_estimators=10, criterion='mse', max_depth=4),
+# 	RandomForestRegressor(n_estimators=10, criterion='mse', max_depth=8),
+# 	RandomForestRegressor(n_estimators=20, criterion='mse'),
+# 	RandomForestRegressor(n_estimators=20, criterion='mse', max_depth=4),
+# 	RandomForestRegressor(n_estimators=30, criterion='mse'),
+# 	AdaBoostRegressor(base_estimator=DecisionTreeRegressor(max_depth=3, criterion='mse'), n_estimators=10),
+# 	AdaBoostRegressor(base_estimator=DecisionTreeRegressor(max_depth=3, criterion='mse'), n_estimators=20),
+# 	AdaBoostRegressor(base_estimator=DecisionTreeRegressor(max_depth=5, criterion='mse'), n_estimators=10),
+# 	AdaBoostRegressor(base_estimator=DecisionTreeRegressor(max_depth=5, criterion='mse'), n_estimators=20),
+# 	AdaBoostRegressor(base_estimator=DecisionTreeRegressor(max_depth=8, criterion='mse'), n_estimators=20),
+# 	AdaBoostRegressor(base_estimator=DecisionTreeRegressor(max_depth=8, criterion='mse'), n_estimators=50),
+# 	AdaBoostRegressor(base_estimator=DecisionTreeRegressor(max_depth=10, criterion='mse'), n_estimators=20),
+# 	AdaBoostRegressor(base_estimator=DecisionTreeRegressor(max_depth=10, criterion='mse'), n_estimators=50),
+# 	AdaBoostRegressor(base_estimator=DecisionTreeRegressor(max_depth=20, criterion='mse'), n_estimators=10),
+# 	AdaBoostRegressor(base_estimator=DecisionTreeRegressor(max_depth=20, criterion='mse'), n_estimators=20),
+# 	GradientBoostingRegressor(n_estimators=10),
+# 	GradientBoostingRegressor(n_estimators=15),
+# 	GradientBoostingRegressor(n_estimators=20),
+# 	GradientBoostingRegressor(n_estimators=30),
+# ]
+
 MODEL_POOL_REG = [
 	SVR(degree=2, C=0.2, gamma='scale'),
-	SVR(degree=3, C=0.2, gamma='scale'),
-	SVR(degree=5, C=0.2, gamma='scale'),
 	DecisionTreeRegressor(criterion='mse', max_depth=4),
-	DecisionTreeRegressor(criterion='mse', max_depth=8),
-	DecisionTreeRegressor(criterion='mse', max_depth=10),
-	KNeighborsRegressor(n_neighbors=3, algorithm='ball_tree'),
-	KNeighborsRegressor(n_neighbors=3, algorithm='kd_tree'),
-	LinearRegression(),
-	RandomForestRegressor(n_estimators=10, criterion='mse', max_depth=4),
-	RandomForestRegressor(n_estimators=10, criterion='mse', max_depth=8),
-	RandomForestRegressor(n_estimators=20, criterion='mse'),
-	RandomForestRegressor(n_estimators=20, criterion='mse', max_depth=4),
 	RandomForestRegressor(n_estimators=30, criterion='mse'),
-	AdaBoostRegressor(base_estimator=DecisionTreeRegressor(max_depth=3, criterion='mse'), n_estimators=10),
-	AdaBoostRegressor(base_estimator=DecisionTreeRegressor(max_depth=3, criterion='mse'), n_estimators=20),
-	AdaBoostRegressor(base_estimator=DecisionTreeRegressor(max_depth=5, criterion='mse'), n_estimators=10),
-	AdaBoostRegressor(base_estimator=DecisionTreeRegressor(max_depth=5, criterion='mse'), n_estimators=20),
-	AdaBoostRegressor(base_estimator=DecisionTreeRegressor(max_depth=8, criterion='mse'), n_estimators=20),
-	AdaBoostRegressor(base_estimator=DecisionTreeRegressor(max_depth=8, criterion='mse'), n_estimators=50),
-	AdaBoostRegressor(base_estimator=DecisionTreeRegressor(max_depth=10, criterion='mse'), n_estimators=20),
-	AdaBoostRegressor(base_estimator=DecisionTreeRegressor(max_depth=10, criterion='mse'), n_estimators=50),
-	AdaBoostRegressor(base_estimator=DecisionTreeRegressor(max_depth=20, criterion='mse'), n_estimators=10),
 	AdaBoostRegressor(base_estimator=DecisionTreeRegressor(max_depth=20, criterion='mse'), n_estimators=20),
-	GradientBoostingRegressor(n_estimators=10),
-	GradientBoostingRegressor(n_estimators=15),
-	GradientBoostingRegressor(n_estimators=20),
 	GradientBoostingRegressor(n_estimators=30),
 ]
+
+
 CONFIG_POOL_REG = [Config(id=i, dataset_name='california_hosuing', classifier_model=clf) for i, clf in enumerate(MODEL_POOL_REG)]
 
 

@@ -1,6 +1,6 @@
 import joblib
-from dataset import Dataset
-from sklearn.metrics import accuracy_score, mean_squared_error
+from knapsack.dataset import Dataset
+from sklearn.metrics import mean_squared_error, accuracy_score
 
 
 class Pipeline(object):
@@ -26,11 +26,10 @@ class Pipeline(object):
 		
 	def validate(self):
 		model_name = self.clf.__str__().lower()
-		score = mean_squared_error(self.clf.predict(self.X_test), self.y_test)
-		# if 'regress' in model_name or 'svr' in model_name:
-		# 	score = mean_squared_error(self.clf.predict(self.X_test), self.y_test)
-		# else:
-		# 	score = accuracy_score(self.clf.predict(self.X_test), self.y_test)
+		if 'regress' in model_name or 'svr' in model_name:
+			score = mean_squared_error(self.clf.predict(self.X_test), self.y_test)
+		else:
+			score = accuracy_score(self.clf.predict(self.X_test), self.y_test)
 		return score
 	
 	def save(self):

@@ -1,2 +1,2 @@
-# knapsack-scheduler
-Scheduler Machine Learning Models Using Knapsack
+# Knapsack Scheduler
+Using knapsack optimization problem to deploy machine learning models.    
