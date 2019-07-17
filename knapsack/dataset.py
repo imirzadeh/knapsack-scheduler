@@ -2,7 +2,7 @@ from sklearn.model_selection import train_test_split
 from joblib import dump, load
 from sklearn.datasets import make_classification, make_regression
 from sklearn.preprocessing import StandardScaler
-from sklearn.datasets import load_boston, fetch_california_housing
+from sklearn.datasets import load_boston, fetch_california_housing, load_diabetes
 
 
 class Dataset(object):
@@ -33,12 +33,16 @@ def make_regression_1():
 	process_dataset(name, X, y)
 
 
-def make_boston():
+def make_california():
 	name = 'california_hosuing'
 	X, y = fetch_california_housing(return_X_y=True)
 	process_dataset(name, X, y)
 	
-
+def make_diabetes():
+	name = 'diabetes_regression'
+	X, y = load_diabetes(return_X_y=True)
+	process_dataset(name, X, y)
+	
 def process_dataset(name, X, y, supervised=True):
 	if supervised:
 		X = StandardScaler().fit_transform(X)
@@ -53,7 +57,8 @@ if __name__ == "__main__":
 	# make_artificial_clf_binary()
 	# make_artificial_clf_multi()
 	# make_regression_1()
-	make_boston()
+	# make_boston()
+	make_diabetes()
 # 	dataset_name  = 'moons_0'
 # 	X, y = make_moons(n_samples=80, noise=0.2)
 #	X = StandardScaler().fit_transform(X)
