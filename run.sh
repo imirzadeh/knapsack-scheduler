@@ -3,7 +3,7 @@ sleep 35
 sudo bash ./benchmark.sh
 sleep 30
 python3 -m knapsack.optimize
-git add ./report.xlsx
+git add .
 git commit -m 'Run experiment'
 git pull --rebase
 git push origin master
