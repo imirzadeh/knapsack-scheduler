@@ -4,7 +4,7 @@ from knapsack.config import CONFIG_POOL_REG
 COMET_ML_KEY = dict(api_key="1UNrcJdirU9MEY0RC3UCU7eAg", project_name="trial-1", workspace="knapsack")
 
 # name of the dataset we are working
-DATASET_NAME = 'california_hosuing'
+DATASET_NAME = 'diabetes_regression'
 
 # number of retry for experiments
 RETRY_EXPERIMENTS = 10

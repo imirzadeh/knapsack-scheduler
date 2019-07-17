@@ -9,7 +9,6 @@ from knapsack.config import get_config_by_id
 from knapsack.settings import DATASET_NAME, RETRY_EXPERIMENTS, CURRENT_POOL
 
 
-
 def build_model(config):
 	p = Pipeline(config)
 	p.run_pipeline()
@@ -91,4 +90,3 @@ if __name__ == "__main__":
 	cfg = get_config_by_id(cfg_id)
 	print(cfg.id)
 	measure(cfg)
-	
