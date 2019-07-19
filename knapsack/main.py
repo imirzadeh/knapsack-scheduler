@@ -23,26 +23,25 @@ def measure(config):
 		for i in range(RETRY_EXPERIMENTS):
 			run_nn_model('./models/{}.tflite'.format(config.id), X_test)
 	else:
-            print("_____________________%%%%%%%%%%%%%______________")
-            clf = load('./models/{}.joblib'.format(config.id))
-            for i in range(RETRY_EXPERIMENTS):
-                    for x in X_test:
-                            clf.predict([x])
+		clf = load('./models/{}.joblib'.format(config.id))
+		for i in range(RETRY_EXPERIMENTS):
+				for x in X_test:
+						clf.predict([x])
 
 
 def train_models(config_pool=CURRENT_POOL):
-        results = []
-        num_models = len(config_pool)
-        with open("./models/models.txt", "w") as f:
-            f.write(str(num_models-1))
-        for cfg in config_pool:
-		print('running {}'.format(cfg.to_dict()))
-		result = cfg.to_dict()
-		result['score'] = build_model(cfg)
-		results.append(result)
-	df = pd.DataFrame(results)
-        df = df.set_index('id')
-        helpers.create_new_excel_file('report.xlsx', {'models': df})
+		results = []
+		num_models = len(config_pool)
+		with open("./models/models.txt", "w") as f:
+			f.write(str(num_models-1))
+		for cfg in config_pool:
+			print('running {}'.format(cfg.to_dict()))
+			result = cfg.to_dict()
+			result['score'] = build_model(cfg)
+			results.append(result)
+		df = pd.DataFrame(results)
+		df = df.set_index('id')
+		helpers.create_new_excel_file('report.xlsx', {'models': df})
 
 
 def read_measurements(dataset_name, config_pool):
