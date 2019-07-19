@@ -81,16 +81,23 @@ def report_solution(U_MAX):
 	
 	for W in W_list:
 		status, ids, solution = solve_knapsack(W, U_MAX)
-		optimal_values[str(W//1000)] = list(map(lambda x: int(round(x, 2)), solution))
-		
-		# comparison
-		optimal_energy = np.sum(np.dot(solution, df['energy_per_sample']))/1000
-		optimal_score = np.sum(np.dot(solution, df['score']))/U_MAX
-		comparison_data.append({
-			'model': '{}-optimal'.format(W//1000),
-			'score': optimal_score,
-			'energy': optimal_energy
-		})
+		if status == cp.INFEASIBLE or status == cp.INFEASIBLE_INACCURATE:
+			comparison_data.append({
+				'model': '{}-optimal'.format(W//1000),
+				'score': None,
+				'energy': None
+			})
+		else:
+			optimal_values[str(W//1000)] = list(map(lambda x: int(round(x, 2)), solution))
+			
+			# comparison
+			optimal_energy = np.sum(np.dot(solution, df['energy_per_sample']))/1000
+			optimal_score = np.sum(np.dot(solution, df['score']))/U_MAX
+			comparison_data.append({
+				'model': '{}-optimal'.format(W//1000),
+				'score': optimal_score,
+				'energy': optimal_energy
+			})
 		
 	sheets['optimal_values'] = optimal_values
 	sheets['comparison'] = pd.DataFrame(comparison_data).set_index('model')
