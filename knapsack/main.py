@@ -5,23 +5,30 @@ import pandas as pd
 from joblib import load
 from knapsack.dataset import Dataset
 from knapsack.pipeline import Pipeline
+from knapsack.nn_utils import run_nn_model
 from knapsack.config import get_config_by_id
 from knapsack.settings import DATASET_NAME, RETRY_EXPERIMENTS, CURRENT_POOL
-
 
 def build_model(config):
 	p = Pipeline(config)
 	p.run_pipeline()
 	score = p.validate()
+	print("******* score is {}".format(score))
 	return score
 
 
 def measure(config):
 	X_test, y_test = Dataset(config.dataset_name, train=False).get()
-	clf = load('./models/{}.joblib'.format(config.id))
-	for i in range(RETRY_EXPERIMENTS):
-		for x in X_test:
-			clf.predict([x])
+	model_name = config._get_model_name()
+	if 'keras' in model_name:
+		for i in range(RETRY_EXPERIMENTS):
+			run_nn_model('./models/{}.tflite'.format(config.id), X_test)
+	else:
+		
+		clf = load('./models/{}.joblib'.format(config.id))
+		for i in range(RETRY_EXPERIMENTS):
+			for x in X_test:
+				clf.predict([x])
 
 
 def train_models(config_pool=CURRENT_POOL):

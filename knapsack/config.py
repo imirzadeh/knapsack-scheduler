@@ -9,6 +9,7 @@ from sklearn.naive_bayes import GaussianNB
 from sklearn.neighbors import KNeighborsClassifier, KNeighborsRegressor
 from sklearn.feature_selection import RFE, SelectKBest, chi2, mutual_info_classif
 from knapsack.settings import DATASET_NAME
+from knapsack.nn_utils import get_time_series_cnn_model
 
 
 class Config(object):
@@ -16,12 +17,16 @@ class Config(object):
 		self.id = id
 		self.dataset_name = dataset_name
 		self.classifier_model = classifier_model
+		if 'keras' in self._get_model_name():
+			self.dataset_name = self.dataset_name + "_NN"
 	
 	def _get_model_name(self):
 		clf_name = self.classifier_model.__str__()
 		if clf_name.startswith("RFE"):
 			clf_name = clf_name[4:]  # remove RFE(...)
 			clf_name = "RFE({})".format(clf_name[:clf_name.find("(")])
+		elif 'keras' in clf_name or 'Keras' in clf_name:
+			clf_name = clf_name
 		else:
 			clf_name = clf_name[:clf_name.find("(")]
 		return clf_name
@@ -99,7 +104,16 @@ MODEL_POOL_REG = [
 CONFIG_POOL_REG = [Config(id=i, dataset_name=DATASET_NAME, classifier_model=clf) for i, clf in enumerate(MODEL_POOL_REG)]
 
 
+NN_MODELS_POOL = [
+	get_time_series_cnn_model(128, 9, 6, [(32, 3), (32, 3)], 50),
+	get_time_series_cnn_model(128, 9, 6, [(64, 4), (64, 4)], 100),
+]
+
+CONFIG_POOL_NN = [Config(id=i, dataset_name='UCI_HAR', classifier_model=clf) for i, clf in enumerate(NN_MODELS_POOL)]
+
+
+# TODO Fix the static config pool
 def get_config_by_id(config_id):
-	for cfg in CONFIG_POOL_REG:
+	for cfg in CONFIG_POOL_NN:
 		if cfg.id == config_id:
 			return cfg
