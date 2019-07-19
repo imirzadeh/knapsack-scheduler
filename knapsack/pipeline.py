@@ -31,7 +31,7 @@ class Pipeline(object):
 		self.model.fit(self.X_train, self.y_train)
 		
 	def validate(self):
-		model_name = self.model_name
+		model_name = self.model_name.lower()
 		if 'regress' in model_name or 'svr' in model_name or 'lasso' in model_name:
 			score = mean_squared_error(self.model.predict(self.X_test), self.y_test)
 		elif 'keras' in model_name:
