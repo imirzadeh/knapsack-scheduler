@@ -13,7 +13,6 @@ def build_model(config):
 	p = Pipeline(config)
 	p.run_pipeline()
 	score = p.validate()
-	print("******* score is {}".format(score))
 	return score
 
 
@@ -24,11 +23,11 @@ def measure(config):
 		for i in range(RETRY_EXPERIMENTS):
 			run_nn_model('./models/{}.tflite'.format(config.id), X_test)
 	else:
-		
-		clf = load('./models/{}.joblib'.format(config.id))
-		for i in range(RETRY_EXPERIMENTS):
-			for x in X_test:
-				clf.predict([x])
+            print("_____________________%%%%%%%%%%%%%______________")
+            clf = load('./models/{}.joblib'.format(config.id))
+            for i in range(RETRY_EXPERIMENTS):
+                    for x in X_test:
+                            clf.predict([x])
 
 
 def train_models(config_pool=CURRENT_POOL):
@@ -95,5 +94,5 @@ def generate_report(config_pool=CURRENT_POOL):
 if __name__ == "__main__":
 	cfg_id = int(sys.argv[1])
 	cfg = get_config_by_id(cfg_id)
-	print(cfg.id)
+	print(cfg.to_dict())
 	measure(cfg)
