@@ -106,7 +106,22 @@ CONFIG_POOL_REG = [Config(id=i, dataset_name=DATASET_NAME, classifier_model=clf)
 
 NN_MODELS_POOL = [
 	get_time_series_cnn_model(128, 9, 6, [(32, 3), (32, 3)], 50),
-	get_time_series_cnn_model(128, 9, 6, [(64, 4), (64, 4)], 100),
+	get_time_series_cnn_model(128, 9, 6, [(64, 3), (64, 3)], 100),
+	SVC(kernel='rbf', C=10, gamma='scale'),
+	SVC(kernel='rbf', C=100, gamma='scale'),
+	AdaBoostClassifier(base_estimator=DecisionTreeClassifier(max_depth=3, criterion='entropy'), n_estimators=20),
+	AdaBoostClassifier(base_estimator=DecisionTreeClassifier(max_depth=3, criterion='entropy'), n_estimators=50),
+	AdaBoostClassifier(base_estimator=DecisionTreeClassifier(max_depth=5, criterion='entropy'), n_estimators=30),
+	AdaBoostClassifier(base_estimator=DecisionTreeClassifier(max_depth=5, criterion='entropy'), n_estimators=50),
+	RandomForestClassifier(n_estimators=5, criterion='entropy'),
+	RandomForestClassifier(n_estimators=10, criterion='entropy'),
+	RandomForestClassifier(n_estimators=20, criterion='entropy'),
+	RandomForestClassifier(n_estimators=30, criterion='entropy'),
+	GradientBoostingClassifier(n_estimators=10, max_depth=5),
+	GradientBoostingClassifier(n_estimators=10, max_depth=10),
+	GradientBoostingClassifier(n_estimators=20, max_depth=10),
+	GradientBoostingClassifier(n_estimators=20, max_depth=20),
+	LogisticRegression(solver='lbfgs'),
 ]
 
 CONFIG_POOL_NN = [Config(id=i, dataset_name='UCI_HAR', classifier_model=clf) for i, clf in enumerate(NN_MODELS_POOL)]

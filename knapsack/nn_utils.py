@@ -16,7 +16,7 @@ from keras import backend as K
 
 
 class KerasModel(object):
-	def __init__(self, model,train_epochs=5, batch_size=32):
+	def __init__(self, model, train_epochs=10, batch_size=32):
 		self.model = model
 		self.graph = tf.Graph()
 		self.session = tf.Session(graph=self.graph)
