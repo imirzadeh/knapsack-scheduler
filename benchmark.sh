@@ -1,4 +1,4 @@
-for ID in $(seq 0 $(echo $(ls -lh models/*.joblib | wc -l)-1 | bc))
+for ID in $(seq 0 $(cat models/models.txt))
 do
     for N in 1 2 3
     do
