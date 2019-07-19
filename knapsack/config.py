@@ -110,6 +110,6 @@ CONFIG_POOL_NN = [Config(id=i, dataset_name='UCI_HAR', classifier_model=clf) for
 
 # TODO Fix the static config pool
 def get_config_by_id(config_id):
-	for cfg in CONFIG_POOL_NN:
+	for cfg in CONFIG_POOL_REG:
 		if cfg.id == config_id:
 			return cfg
