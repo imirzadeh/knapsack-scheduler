@@ -11,4 +11,4 @@ do
     sleep 10
 done
 python3 -c 'from knapsack import main; main.generate_report()'
-sudo rm *.txt
+#sudo rm *.txt

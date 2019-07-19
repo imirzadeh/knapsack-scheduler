@@ -8,7 +8,7 @@ DATASET_NAME = 'UCI_HAR'
 
 # number of retry for experiments
 from knapsack.config import CONFIG_POOL_REG, CONFIG_POOL_NN
-RETRY_EXPERIMENTS = 5
+RETRY_EXPERIMENTS = 2
 CURRENT_POOL = CONFIG_POOL_NN
 
 # output excel file
