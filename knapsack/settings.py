@@ -4,7 +4,7 @@ import tensorflow as tf
 COMET_ML_KEY = dict(api_key="1UNrcJdirU9MEY0RC3UCU7eAg", project_name="trial-1", workspace="knapsack")
 
 # name of the dataset we are working
-DATASET_NAME = 'UCI_HAR'
+DATASET_NAME = 'diabetes_regression'
 
 # number of retry for experiments
 from knapsack.config import CONFIG_POOL_REG, CONFIG_POOL_NN

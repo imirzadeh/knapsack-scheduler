@@ -70,34 +70,15 @@ MODEL_POOL = [
 CONFIG_POOL = [Config(id=i, dataset_name='artificial_clf_multi', classifier_model=clf) for i, clf in enumerate(MODEL_POOL)]
 
 MODEL_POOL_REG = [
-	SVR(degree=2, C=0.5, gamma='scale'),
 	SVR(degree=3, C=0.5, gamma='scale'),
-	SVR(degree=5, C=0.5, gamma='scale'),
 	DecisionTreeRegressor(criterion='mse', max_depth=10),
 	KNeighborsRegressor(n_neighbors=3, algorithm='ball_tree'),
-	KNeighborsRegressor(n_neighbors=3, algorithm='kd_tree'),
-	LinearRegression(),
-	LassoCV(cv=2, random_state=0),
-	LassoCV(cv=5, random_state=0),
-	RandomForestRegressor(n_estimators=10, criterion='mse', max_depth=5),
-	RandomForestRegressor(n_estimators=10, criterion='mse'),
 	RandomForestRegressor(n_estimators=20, criterion='mse', max_depth=5),
-	RandomForestRegressor(n_estimators=20, criterion='mse'),
-	RandomForestRegressor(n_estimators=30, criterion='mse'),
 	AdaBoostRegressor(base_estimator=DecisionTreeRegressor(max_depth=3, criterion='mse'), n_estimators=10),
 	AdaBoostRegressor(base_estimator=DecisionTreeRegressor(max_depth=3, criterion='mse'), n_estimators=20),
-	AdaBoostRegressor(base_estimator=DecisionTreeRegressor(max_depth=5, criterion='mse'), n_estimators=10),
 	AdaBoostRegressor(base_estimator=DecisionTreeRegressor(max_depth=5, criterion='mse'), n_estimators=20),
-	AdaBoostRegressor(base_estimator=DecisionTreeRegressor(max_depth=8, criterion='mse'), n_estimators=20),
-	AdaBoostRegressor(base_estimator=DecisionTreeRegressor(max_depth=8, criterion='mse'), n_estimators=50),
-	AdaBoostRegressor(base_estimator=DecisionTreeRegressor(max_depth=10, criterion='mse'), n_estimators=20),
-	AdaBoostRegressor(base_estimator=DecisionTreeRegressor(max_depth=10, criterion='mse'), n_estimators=50),
-	AdaBoostRegressor(base_estimator=DecisionTreeRegressor(max_depth=20, criterion='mse'), n_estimators=10),
-	AdaBoostRegressor(base_estimator=DecisionTreeRegressor(max_depth=20, criterion='mse'), n_estimators=20),
 	GradientBoostingRegressor(n_estimators=10),
 	GradientBoostingRegressor(n_estimators=15),
-	GradientBoostingRegressor(n_estimators=20),
-	GradientBoostingRegressor(n_estimators=30),
 ]
 
 
