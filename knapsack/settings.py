@@ -9,7 +9,7 @@ DATASET_NAME = 'diabetes_regression'
 # number of retry for experiments
 from knapsack.config import CONFIG_POOL_REG, CONFIG_POOL_NN
 RETRY_EXPERIMENTS = 3
-CURRENT_POOL = CONFIG_POOL_NN
+CURRENT_POOL = CONFIG_POOL_REG
 
 # output excel file
 RESULT_FILE = './report.xlsx'
