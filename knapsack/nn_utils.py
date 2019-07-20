@@ -111,7 +111,7 @@ def run_nn_model(tf_lite_path, X_test):
 	output_details = interpreter.get_output_details()
 	
 	for x in X_test:
-		x = np.array(x.reshape(1, 128, 9), dtype=np.float32)
+		x = np.array(x.reshape(1, 10), dtype=np.float32)
 		input_shape = input_details[0]['shape']
 		input_data = x  # np.array(np.random.random_sample(input_shape), dtype=np.float32)
 		interpreter.set_tensor(input_details[0]['index'], input_data)
