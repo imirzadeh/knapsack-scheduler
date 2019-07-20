@@ -51,7 +51,23 @@ class KerasModel(object):
 			model_type = 'RNN'
 		clf_name = 'keras-{}'.format(model_type)
 		return clf_name
+
 	
+def get_mlp_diabetes(size=20):
+	keras_model = KerasModel(model=None, train_epochs=80)
+	graph, session = keras_model.graph, keras_model.session
+	print(graph, session)
+	with graph.as_default():
+		with session.as_default():
+			model = Sequential()
+			model.add(Dense(size, activation='relu', input_shape=(10,)))
+			model.add(Dense(size, activation='relu'))
+			model.add(Dropout(rate=0.5))
+			model.add(Dense(1, activation='relu'))
+			model.compile(loss='mse', optimizer='adam', metrics=['mse'])
+			keras_model.model = model
+			return keras_model
+			
 	
 def get_time_series_cnn_model(n_timesteps, n_features, n_outputs, conv_layers=[(64, 3), (64, 3)], dense_size=100):
 	keras_model = KerasModel(model=None)

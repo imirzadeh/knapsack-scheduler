@@ -9,7 +9,7 @@ from sklearn.naive_bayes import GaussianNB
 from sklearn.neighbors import KNeighborsClassifier, KNeighborsRegressor
 from sklearn.feature_selection import RFE, SelectKBest, chi2, mutual_info_classif
 from knapsack.settings import DATASET_NAME
-from knapsack.nn_utils import get_time_series_cnn_model
+from knapsack.nn_utils import get_time_series_cnn_model, get_mlp_diabetes
 
 
 class Config(object):
@@ -75,10 +75,14 @@ MODEL_POOL_REG = [
 	KNeighborsRegressor(n_neighbors=3, algorithm='ball_tree'),
 	RandomForestRegressor(n_estimators=20, criterion='mse', max_depth=5),
 	AdaBoostRegressor(base_estimator=DecisionTreeRegressor(max_depth=3, criterion='mse'), n_estimators=10),
-	AdaBoostRegressor(base_estimator=DecisionTreeRegressor(max_depth=3, criterion='mse'), n_estimators=20),
-	AdaBoostRegressor(base_estimator=DecisionTreeRegressor(max_depth=5, criterion='mse'), n_estimators=20),
+	AdaBoostRegressor(base_estimator=DecisionTreeRegressor(max_depth=3, criterion='mse'), n_estimators=30),
+	AdaBoostRegressor(base_estimator=DecisionTreeRegressor(max_depth=5, criterion='mse'), n_estimators=30),
 	GradientBoostingRegressor(n_estimators=10),
 	GradientBoostingRegressor(n_estimators=15),
+	get_mlp_diabetes(25),
+	get_mlp_diabetes(50),
+	get_mlp_diabetes(100),
+	
 ]
 
 
