@@ -92,11 +92,11 @@ CONFIG_POOL_REG = [Config(id=i, dataset_name=DATASET_NAME, classifier_model=clf)
 
 
 prune_poly_90 = {
-      'pruning_schedule': pruning_schedule.PolynomialDecay(initial_sparsity=0.70,
+      'pruning_schedule': pruning_schedule.PolynomialDecay(initial_sparsity=0.10,
                                                    final_sparsity=0.90,
-                                                   begin_step=100,
+                                                   begin_step=0,
 												   end_step = 920,
-                                                   frequency=10)
+                                                   frequency=50)
 }
 
 
@@ -111,8 +111,8 @@ prune_poly_75 = {
 
 prune_const_90 = {
 	'pruning_schedule': pruning_schedule.ConstantSparsity(target_sparsity=0.90,
-														 begin_step=100,
-														 end_step=920,
+														 begin_step=50,
+														 end_step=-1,
 														 frequency=50)
 }
 
@@ -126,16 +126,16 @@ prune_const_75 = {
 
 
 NN_MODELS_POOL = [
-	get_time_series_cnn_model(128, 9, 6, [(32, 3), (32, 3)], 50),
-	get_time_series_cnn_model(128, 9, 6, [(64, 3), (64, 3)], 100),
-	get_time_series_cnn_model(128, 9, 6, [(64, 3), (64, 3)], 100, quantized=True),
-	get_time_series_cnn_model(128, 9, 6, [(64, 3), (64, 3)], 100, prune_params=prune_poly_90, quantized=True),
-	get_time_series_cnn_model(128, 9, 6, [(64, 3), (64, 3)], 100, prune_params=prune_poly_90),
-	SVC(kernel='rbf', C=10, gamma='scale'),
-	AdaBoostClassifier(base_estimator=DecisionTreeClassifier(max_depth=3, criterion='entropy'), n_estimators=20),
-	RandomForestClassifier(n_estimators=5, criterion='entropy'),
+	get_time_series_cnn_model(128, 9, 6, [(32, 3), (64, 3), (128, 3)], 50),
+	get_time_series_cnn_model(128, 9, 6, [(32, 3), (64, 3), (128, 3)], 50, quantized=True),
+	get_time_series_cnn_model(128, 9, 6, [(32, 3), (64, 3), (128, 3)], 50, prune_params=prune_const_90),
+	get_time_series_cnn_model(128, 9, 6, [(64, 3), (64, 3)], 100, prune_params=prune_const_90, quantized=True),
+	SVC(kernel='rbf', C=5, gamma='scale'),
+	# AdaBoostClassifier(base_estimator=DecisionTreeClassifier(max_depth=5, criterion='entropy'), n_estimators=50),
+	KNeighborsClassifier(n_neighbors=3, algorithm='kd_tree'),
+	GaussianNB(),
 	RandomForestClassifier(n_estimators=10, criterion='entropy'),
-
+	RandomForestClassifier(n_estimators=15, criterion='entropy'),
 ]
 
 CONFIG_POOL_NN = [Config(id=i, dataset_name='UCI_HAR', classifier_model=clf) for i, clf in enumerate(NN_MODELS_POOL)]
