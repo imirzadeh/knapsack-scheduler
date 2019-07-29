@@ -78,7 +78,7 @@ def report_solution(U_MAX):
 	W_list = [((min_energy + i * delta)//1000)*1000 for i in range(NUM_W)]
 	
 	delta_t = (max_time - min_time)*1.0 / NUM_W
-	T_list = [min_time + i * delta_t for i in range(NUM_W)]
+	T_list = [min_time + i * delta_t for i in range(NUM_W+1)]
 	
 	optimal_values = pd.DataFrame()
 	sheets = {

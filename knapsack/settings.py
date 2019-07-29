@@ -9,12 +9,12 @@ DATASET_NAME = 'diabetes_regression'
 # number of retry for experiments
 from knapsack.config import CONFIG_POOL_REG, CONFIG_POOL_NN
 RETRY_EXPERIMENTS = 3
-CURRENT_POOL = CONFIG_POOL_REG
+CURRENT_POOL = CONFIG_POOL_NN
 
 # output excel file
 RESULT_FILE = './report.xlsx'
 
 # Neural net settings
-NN_EPOCHS = 3
+NN_EPOCHS = 5
 NN_BATCH_SIZE = 32
 

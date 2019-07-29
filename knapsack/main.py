@@ -9,6 +9,7 @@ from knapsack.nn_utils import run_nn_model
 from knapsack.config import get_config_by_id
 from knapsack.settings import DATASET_NAME, RETRY_EXPERIMENTS, CURRENT_POOL
 
+
 def build_model(config):
 	p = Pipeline(config)
 	p.run_pipeline()
