@@ -47,7 +47,7 @@ class KerasModel(object):
 			print(self.model.summary())
 			save_keras_model(self.model, keras_file_path)
 		tflite_path = './models/{}.tflite'.format(id)
-		convert_keras_file_to_tflite(keras_file_path, tflite_path)
+		convert_keras_file_to_tflite(keras_file_path, tflite_path, quantized=self.quantized)
 	
 	def evaluate(self, id, X_test, y_test):
 		# with self.graph.as_default(), self.session.as_default():
@@ -103,6 +103,10 @@ def get_time_series_cnn_model(n_timesteps, n_features, n_outputs,
 				model.add(Conv1D(filters=filters, kernel_size=kernel_size, activation='relu'))
 			model.add(Dropout(0.5))
 			model.add(MaxPooling1D(pool_size=2))
+			if len(conv_layers) > 2:
+				filters, kernel_size = conv_layers[2]
+				model.add(Conv1D(filters=filters, kernel_size=kernel_size, activation='relu', input_shape=(n_timesteps,n_features)))
+				model.add(MaxPooling1D(pool_size=2))
 			model.add(Flatten())
 			model.add(Dense(dense_size, activation='relu'))
 			model.add(Dense(n_outputs, activation='softmax'))
@@ -121,6 +125,7 @@ def representative_HAR_gen():
 	data = load('./datasets/{}.{}'.format('UCI_HAR_NN', 'train'))
 	X = data['X']
 	for inp in X:
+		inp = np.array(inp.reshape(1, 128, 9), dtype=np.float32)
 		yield [inp]
 		
 
@@ -134,53 +139,54 @@ def convert_keras_file_to_tflite(keras_model_path, tf_lite_path, quantized=False
 
 
 def eval_nn_model(tf_lite_path, X_test, y_test):
-	interpreter = tf.lite.Interpreter(model_path=tf_lite_path)
-	interpreter.allocate_tensors()
-	
-	# Get input and output tensors.
-	input_details = interpreter.get_input_details()
-	output_details = interpreter.get_output_details()
-	predictions = []
-	for x in X_test:
-		x = np.array(x.reshape(1, 128, 9), dtype=np.float32)
-		input_shape = input_details[0]['shape']
-		input_data = x  # np.array(np.random.random_sample(input_shape), dtype=np.float32)
-		interpreter.set_tensor(input_details[0]['index'], input_data)
+	with tf.device("/cpu:0"):
+		interpreter = tf.lite.Interpreter(model_path=tf_lite_path)
+		interpreter.allocate_tensors()
 		
-		interpreter.invoke()
+		# Get input and output tensors.
+		input_details = interpreter.get_input_details()
+		output_details = interpreter.get_output_details()
+		predictions = []
+		for x in X_test:
+			x = np.array(x.reshape(1, 128, 9), dtype=np.float32)
+			input_shape = input_details[0]['shape']
+			input_data = x  # np.array(np.random.random_sample(input_shape), dtype=np.float32)
+			interpreter.set_tensor(input_details[0]['index'], input_data)
+			
+			interpreter.invoke()
+			
+			# The function `get_tensor()` returns a copy of the tensor data.
+			# Use `tensor()` in order to get a pointer to the tensor.
+			output_data = interpreter.get_tensor(output_details[0]['index'])
+			predictions.append(output_data[0])
 		
-		# The function `get_tensor()` returns a copy of the tensor data.
-		# Use `tensor()` in order to get a pointer to the tensor.
-		output_data = interpreter.get_tensor(output_details[0]['index'])
-		predictions.append(output_data[0])
-	
-	correct = 0
-	for idx, pred in enumerate(predictions):
-		pred = np.argmax(pred)
-		target = np.argmax(y_test[idx])
-		if pred == target:
-			correct += 1
-	accuracy = correct * 1.0 / len(y_test)
-	return accuracy
+		correct = 0
+		for idx, pred in enumerate(predictions):
+			pred = np.argmax(pred)
+			target = np.argmax(y_test[idx])
+			if pred == target:
+				correct += 1
+		accuracy = correct * 1.0 / len(y_test)
+		return accuracy
 	
 
 def run_nn_model(tf_lite_path, X_test):
-	interpreter = tf.lite.Interpreter(model_path=tf_lite_path)
-	interpreter.allocate_tensors()
-	
-	# Get input and output tensors.
-	input_details = interpreter.get_input_details()
-	output_details = interpreter.get_output_details()
-	
-	for x in X_test:
-		x = np.array(x.reshape(1, 128, 9), dtype=np.float32)
-		input_shape = input_details[0]['shape']
-		input_data = x  # np.array(np.random.random_sample(input_shape), dtype=np.float32)
-		interpreter.set_tensor(input_details[0]['index'], input_data)
+	with tf.device("/cpu:0"):
+		interpreter = tf.lite.Interpreter(model_path=tf_lite_path)
+		interpreter.allocate_tensors()
 		
-		interpreter.invoke()
+		# Get input and output tensors.
+		input_details = interpreter.get_input_details()
+		output_details = interpreter.get_output_details()
 		
-		# The function `get_tensor()` returns a copy of the tensor data.
-		# Use `tensor()` in order to get a pointer to the tensor.
-		output_data = interpreter.get_tensor(output_details[0]['index'])
-		
+		for x in X_test:
+			x = np.array(x.reshape(1, 128, 9), dtype=np.float32)
+			input_shape = input_details[0]['shape']
+			input_data = x  # np.array(np.random.random_sample(input_shape), dtype=np.float32)
+			interpreter.set_tensor(input_details[0]['index'], input_data)
+			
+			interpreter.invoke()
+			
+			# The function `get_tensor()` returns a copy of the tensor data.
+			# Use `tensor()` in order to get a pointer to the tensor.
+			output_data = interpreter.get_tensor(output_details[0]['index'])
