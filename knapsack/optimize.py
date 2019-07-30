@@ -64,7 +64,7 @@ def report_solution(U_MAX):
 	max_energy = U_MAX * best_accuracy_model['energy_per_sample']
 	
 	
-	NUM_W = 10
+	NUM_W = 20
 	delta = (max_energy - min_energy) // NUM_W
 	W_list = [((min_energy + i * delta) // 1000) * 1000 for i in range(NUM_W)]
 	# W_list = [50000, 75000, 100000, 150000, 200000]
