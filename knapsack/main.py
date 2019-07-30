@@ -14,6 +14,7 @@ def build_model(config):
 	p = Pipeline(config)
 	p.run_pipeline()
 	score = p.validate()
+	print("SCORE ==> ", score)
 	return score
 
 

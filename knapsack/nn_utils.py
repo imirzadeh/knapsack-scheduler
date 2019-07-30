@@ -40,11 +40,8 @@ class KerasModel(object):
 	def save(self, id):
 		with self.graph.as_default(), self.session.as_default():
 			keras_file_path = './models/{}.h5'.format(id)
-			print(self.model.summary())
-			print("**"*20)
 			if self.prune_params:
 				self.model = prune.strip_pruning(self.model)
-			print(self.model.summary())
 			save_keras_model(self.model, keras_file_path)
 		tflite_path = './models/{}.tflite'.format(id)
 		convert_keras_file_to_tflite(keras_file_path, tflite_path, quantized=self.quantized)
@@ -132,8 +129,8 @@ def representative_HAR_gen():
 def convert_keras_file_to_tflite(keras_model_path, tf_lite_path, quantized=False):
 	converter = tf.lite.TFLiteConverter.from_keras_model_file(keras_model_path)
 	if quantized:
-		# converter.representative_dataset = representative_HAR_gen
-		converter.optimizations = [tf.lite.Optimize.OPTIMIZE_FOR_LATENCY]
+		converter.representative_dataset = representative_HAR_gen
+		converter.optimizations = [tf.lite.Optimize.OPTIMIZE_FOR_SIZE]
 	tflite_quant_model = converter.convert()
 	open(tf_lite_path, "wb").write(tflite_quant_model)
 
@@ -148,7 +145,7 @@ def eval_nn_model(tf_lite_path, X_test, y_test):
 		output_details = interpreter.get_output_details()
 		predictions = []
 		
-		for x in X_test[np.random.randint(X_test.shape[0], size=50)]:
+		for x in X_test:
 			x = np.array(x.reshape(1, 128, 9), dtype=np.float32)
 			input_shape = input_details[0]['shape']
 			input_data = x  # np.array(np.random.random_sample(input_shape), dtype=np.float32)
@@ -172,7 +169,7 @@ def eval_nn_model(tf_lite_path, X_test, y_test):
 	
 
 def run_nn_model(tf_lite_path, X_test):
-	with tf.device("/cpu:0"):
+	# with tf.device("/cpu:0"):
 		interpreter = tf.lite.Interpreter(model_path=tf_lite_path)
 		interpreter.allocate_tensors()
 		

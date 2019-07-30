@@ -91,21 +91,21 @@ MODEL_POOL_REG = [
 CONFIG_POOL_REG = [Config(id=i, dataset_name=DATASET_NAME, classifier_model=clf) for i, clf in enumerate(MODEL_POOL_REG)]
 
 
-prune_poly_90 = {
-      'pruning_schedule': pruning_schedule.PolynomialDecay(initial_sparsity=0.10,
-                                                   final_sparsity=0.90,
-                                                   begin_step=0,
+prune_poly_50 = {
+      'pruning_schedule': pruning_schedule.PolynomialDecay(initial_sparsity=0.00,
+                                                   final_sparsity=0.50,
+                                                   begin_step=50,
 												   end_step = 920,
                                                    frequency=50)
 }
 
 
-prune_poly_75 = {
-	'pruning_schedule': pruning_schedule.PolynomialDecay(initial_sparsity=0.50,
-														 final_sparsity=0.75,
-														 begin_step=100,
+prune_poly_90 = {
+	'pruning_schedule': pruning_schedule.PolynomialDecay(initial_sparsity=0.00,
+														 final_sparsity=0.90,
+														 begin_step=50,
 														 end_step=920,
-														 frequency=10)
+														 frequency=50)
 }
 
 
@@ -113,7 +113,7 @@ prune_const_90 = {
 	'pruning_schedule': pruning_schedule.ConstantSparsity(target_sparsity=0.90,
 														 begin_step=50,
 														 end_step=-1,
-														 frequency=50)
+														 frequency=20)
 }
 
 
@@ -127,15 +127,33 @@ prune_const_75 = {
 
 NN_MODELS_POOL = [
 	get_time_series_cnn_model(128, 9, 6, [(62, 3), (64, 3)], 50),
-	get_time_series_cnn_model(128, 9, 6, [(62, 3), (64, 3)], 50, quantized=True),
-	get_time_series_cnn_model(128, 9, 6, [(64, 3), (64, 3)], 50, prune_params=prune_const_90),
-	get_time_series_cnn_model(128, 9, 6, [(64, 3), (64, 3)], 50, prune_params=prune_const_90, quantized=True),
-	# SVC(kernel='rbf', C=5, gamma='scale'),
+	get_time_series_cnn_model(128, 9, 6, [(64, 3), (64, 3)], 50, prune_params=prune_poly_50),
+	get_time_series_cnn_model(128, 9, 6, [(64, 3), (64, 3)], 50, prune_params=prune_poly_90),
+	SVC(kernel='rbf', C=5, gamma='scale'),
+	SVC(kernel='linear', C=5, gamma='scale'),
+	DecisionTreeClassifier(criterion='entropy'),
+	DecisionTreeClassifier(criterion='entropy', max_depth=10),
+	DecisionTreeClassifier(criterion='entropy', max_depth=20),
+	RFE(estimator=SVC(kernel='linear', C=5, gamma='scale'), n_features_to_select=10),
+	RFE(estimator=SVC(kernel='linear', C=5, gamma='scale'), n_features_to_select=20),
+	RFE(estimator=SVC(kernel='linear', C=5, gamma='scale'), n_features_to_select=30),
+	RFE(estimator=SVC(kernel='rbf', C=5, gamma='scale'), n_features_to_select=10),
+	RFE(estimator=SVC(kernel='rbf', C=5, gamma='scale'), n_features_to_select=20),
+	RFE(estimator=SVC(kernel='rbf', C=5, gamma='scale'), n_features_to_select=30),
+	RFE(estimator=DecisionTreeClassifier(criterion='entropy'), n_features_to_select=10),
+	RFE(estimator=DecisionTreeClassifier(criterion='entropy'), n_features_to_select=20),
+	RandomForestClassifier(n_estimators=5, criterion='entropy'),
+	RandomForestClassifier(n_estimators=10, criterion='entropy'),
+	RandomForestClassifier(n_estimators=15, criterion='entropy'),
+	RandomForestClassifier(n_estimators=20, criterion='entropy'),
+	GradientBoostingClassifier(n_estimators=10, max_depth=5),
+	GradientBoostingClassifier(n_estimators=10, max_depth=10),
+	GradientBoostingClassifier(n_estimators=10, max_depth=15),
+	GradientBoostingClassifier(n_estimators=20, max_depth=10),
+	GradientBoostingClassifier(n_estimators=20, max_depth=15),
 	# AdaBoostClassifier(base_estimator=DecisionTreeClassifier(max_depth=5, criterion='entropy'), n_estimators=50),
 	# KNeighborsClassifier(n_neighbors=3, algorithm='kd_tree'),
 	# GaussianNB(),
-	# RandomForestClassifier(n_estimators=10, criterion='entropy'),
-	# RandomForestClassifier(n_estimators=15, criterion='entropy'),
 ]
 
 CONFIG_POOL_NN = [Config(id=i, dataset_name='UCI_HAR', classifier_model=clf) for i, clf in enumerate(NN_MODELS_POOL)]
