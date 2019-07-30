@@ -124,7 +124,7 @@ def save_keras_model(model, file_path):
 def representative_HAR_gen():
 	data = load('./datasets/{}.{}'.format('UCI_HAR_NN', 'train'))
 	X = data['X']
-	for inp in X:
+	for inp in X[np.random.randint(X.shape[0], size=20), :]:
 		inp = np.array(inp.reshape(1, 128, 9), dtype=np.float32)
 		yield [inp]
 		
@@ -132,7 +132,7 @@ def representative_HAR_gen():
 def convert_keras_file_to_tflite(keras_model_path, tf_lite_path, quantized=False):
 	converter = tf.lite.TFLiteConverter.from_keras_model_file(keras_model_path)
 	if quantized:
-		converter.representative_dataset = representative_HAR_gen
+		# converter.representative_dataset = representative_HAR_gen
 		converter.optimizations = [tf.lite.Optimize.OPTIMIZE_FOR_LATENCY]
 	tflite_quant_model = converter.convert()
 	open(tf_lite_path, "wb").write(tflite_quant_model)
