@@ -147,7 +147,8 @@ def eval_nn_model(tf_lite_path, X_test, y_test):
 		input_details = interpreter.get_input_details()
 		output_details = interpreter.get_output_details()
 		predictions = []
-		for x in X_test:
+		
+		for x in X_test[np.random.randint(X_test.shape[0], size=50)]:
 			x = np.array(x.reshape(1, 128, 9), dtype=np.float32)
 			input_shape = input_details[0]['shape']
 			input_data = x  # np.array(np.random.random_sample(input_shape), dtype=np.float32)
