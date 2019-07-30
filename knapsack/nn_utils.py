@@ -133,7 +133,7 @@ def convert_keras_file_to_tflite(keras_model_path, tf_lite_path, quantized=False
 	converter = tf.lite.TFLiteConverter.from_keras_model_file(keras_model_path)
 	if quantized:
 		converter.representative_dataset = representative_HAR_gen
-		converter.optimizations = [tf.lite.Optimize.DEFAULT]
+		converter.optimizations = [tf.lite.Optimize.OPTIMIZE_FOR_LATENCY]
 	tflite_quant_model = converter.convert()
 	open(tf_lite_path, "wb").write(tflite_quant_model)
 
