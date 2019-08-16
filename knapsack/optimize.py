@@ -16,6 +16,7 @@ def prepare_optimization_problem_variables():
 	weights = list(df['energy_per_sample'])
 	values = list(df['score'])
 	dataset_name = get_dataset_name(df)
+	times = list(df['time_per_sample'])
 	
 	if helpers.is_regression_dataset(dataset_name):
 		values = helpers.one_minus_x(helpers.scale_values(values))
@@ -25,6 +26,7 @@ def prepare_optimization_problem_variables():
 	return {
 		'weights': weights,
 		'values': values,
+		'times': times,
 		'ids': ids,
 	}
 
@@ -39,16 +41,18 @@ def solve_knapsack(W, U_MAX):
 	weights = variables['weights']
 	values = variables['values']
 	ids = variables['ids']
+	times = variables['times']
 	
 	# solving
 	selection = cp.Variable(shape=len(weights), integer=True)
 	constraints = [weights * selection <= W,
 				   selection >= 0.0,
+				   # times * selection <= U_MAX * 34,
 				   cp.sum(selection) == U_MAX]
 	objective = cp.Maximize(values * selection)
 	problem = cp.Problem(objective=objective, constraints=constraints)
 	problem.solve()
-	
+	print(problem.status)
 	return problem.status, ids, selection.value
 
 
@@ -100,7 +104,7 @@ def report_solution(U_MAX):
 			
 			# comparison
 			optimal_energy = np.sum(np.dot(solution, df['energy_per_sample'])) / 1000
-			optimal_score = np.sum(np.dot(solution, df['score'])) / U_MAX
+			optimal_score = np.sum(np.dot(solution, df['score'])) / np.sum(solution)
 			comparison_data.append({
 				'model': '{}-optimal'.format(int(W // 1000)),
 				'score': optimal_score,

@@ -1,0 +1,16 @@
+resnet18
+resnet34
+resnet50
+resnet101
+se_resnet50
+se_resnet101
+vgg11
+vgg11_bn
+vgg13
+vgg13_bn
+vgg16
+vgg16_bn
+nasnetmobile
+mobilenetv2
+shufflenetv2_x05
+shufflenetv2_x10
